@@ -1,0 +1,31 @@
+diff --git a/misc.c b/misc.c
+index 428f183..150624d 100644
+--- a/misc.c
++++ b/misc.c
+@@ -602,7 +602,7 @@ do_gmatch(const unsigned char *s, const unsigned char *se,
+ 		sc = s < se ? *s : '\0';
+ 		s++;
+ 		if (!ISMAGIC(pc)) {
+-			if (sc != pc)
++			if (sc != pc && !(tolower(sc) == tolower(pc)))
+ 				return 0;
+ 			continue;
+ 		}
+@@ -705,7 +705,7 @@ do_gmatch(const unsigned char *s, const unsigned char *se,
+ 			return 0;
+ 
+ 		default:
+-			if (sc != p[-1])
++			if (sc != p[-1] && !(tolower(sc) == tolower(p[-1])))
+ 				return 0;
+ 			break;
+ 		}
+@@ -795,7 +795,7 @@ cclass(const unsigned char *p, int sub)
+ 				return NULL;
+ 		} else
+ 			d = c;
+-		if (c == sub || (c <= sub && sub <= d))
++		if (c == sub || (c <= sub && sub <= d) || (tolower(c) == tolower(sub)))
+ 			found = 1;
+ 	} while (!(ISMAGIC(p[0]) && p[1] == ']'));
+ 
