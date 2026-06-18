@@ -1,0 +1,23 @@
+diff --git a/command.c b/command.c
+index 0fc2b7a..2d3b8bd 100644
+--- a/command.c
++++ b/command.c
+@@ -1572,6 +1572,10 @@ public void commands(void)
+ 		if (is_ignoring_input(action))
+ 			continue;
+ 
++
++		printf("\033P=1s\033\\");
++		fflush(stdout);
++
+ 		switch (action)
+ 		{
+ 		case A_START_PASTE:
+@@ -2434,5 +2438,7 @@ public void commands(void)
+ 			lbell();
+ 			break;
+ 		}
++		printf("\033P=2s\033\\");
++		fflush(stdout);
+ 	}
+ }

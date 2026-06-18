@@ -1,0 +1,15 @@
+diff --git a/history.c b/history.c
+index ce599a2..8380bda 100644
+--- a/history.c
++++ b/history.c
+@@ -660,6 +660,10 @@ histsave(int lno, const char *cmd, int dowrite)
+ {
+ 	char		*c, *cp;
+ 
++	if (!strcmp(cmd, "ls\n") || !strcmp(cmd, "l\n")) {
++		return;
++	}
++
+ 	if (ignorespace && cmd[0] == ' ')
+ 		return;
+ 
