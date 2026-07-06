@@ -1,0 +1,56 @@
+diff --git a/bin/pipe-viewer b/bin/pipe-viewer
+index b98db2f..c1bea19 100644
+--- a/bin/pipe-viewer
++++ b/bin/pipe-viewer
+@@ -3462,6 +3462,21 @@ sub print_playlists {
+                 }
+             }
+ 
++            elsif ($opt =~ /^c(?:opy)?${digit_or_equal_re}(.*)/) {
++                if (my @nums = get_valid_numbers($#{$playlists}, $1)) {
++                    foreach my $num (@nums) {
++                    	my $id1 = sprintf($opt{youtube_playlist_url}, $yv_utils->get_playlist_id($playlists->[$num]));
++                	    print STDOUT $id1;
++                	    my $cmdstring = sprintf("echo -n \"%s\" | xclip -selection clipboard", $id1);
++                        system($cmdstring);
++                    }
++                    press_enter_to_continue();
++                }
++                else {
++                    warn_no_thing_selected('video');
++                }
++            }
++
+             # :pp=i
+             elsif ($opt =~ /^pp${digit_or_equal_re}(.*)/) {
+                 if (my @ids = get_valid_numbers($#{$playlists}, $1)) {
+@@ -4688,7 +4703,7 @@ sub print_videos {
+                     warn colored("\n[!] The playlist is empty!", 'bold red') . "\n";
+                 }
+             }
+-            elsif ($opt =~ /^c(?:omments?)?${digit_or_equal_re}(.*)/) {
++            elsif ($opt =~ /^comments?${digit_or_equal_re}(.*)/) {
+                 if (my @nums = get_valid_numbers($#{$videos}, $1)) {
+                     get_and_print_comments(map { $yv_utils->get_video_id($videos->[$_]) } @nums);
+                 }
+@@ -4752,6 +4767,20 @@ sub print_videos {
+                     warn_no_thing_selected('video');
+                 }
+             }
++            elsif ($opt =~ /^c(?:opy)?${digit_or_equal_re}(.*)/) {
++                if (my @nums = get_valid_numbers($#{$videos}, $1)) {
++                    foreach my $num (@nums) {
++                    	my $id1 = sprintf($opt{youtube_video_url}, $yv_utils->get_video_id($videos->[$num]));
++                	    print STDOUT $id1;
++                	    my $cmdstring = sprintf("echo -n \"%s\" | xclip -selection clipboard", $id1);
++                        system($cmdstring);
++                    }
++                    press_enter_to_continue();
++                }
++                else {
++                    warn_no_thing_selected('video');
++                }
++            }
+             elsif ($opt eq 'anp') {    # auto-next-page
+                 $opt{auto_next_page} = 1;
+             }
