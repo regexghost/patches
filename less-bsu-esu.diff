@@ -7,8 +7,8 @@ index 0fc2b7a..2d3b8bd 100644
  			continue;
  
 +
-+		printf("\033P=1s\033\\");
-+		fflush(stdout);
++		putstr("\033P=1s\033\\");
++		flush();
 +
  		switch (action)
  		{
@@ -17,7 +17,7 @@ index 0fc2b7a..2d3b8bd 100644
  			lbell();
  			break;
  		}
-+		printf("\033P=2s\033\\");
-+		fflush(stdout);
++		putstr("\033P=2s\033\\");
++		flush();
  	}
  }
