@@ -1,0 +1,14 @@
+diff --git a/emacs.c b/emacs.c
+index af864a2..73d08c9 100644
+--- a/emacs.c
++++ b/emacs.c
+@@ -1501,7 +1501,8 @@ x_init_emacs(void)
+ 	kb_add(x_comp_list,		CTRL('I'), 0);
+ 	kb_add(x_comp_list,		CTRL('['), '=', 0);
+ 	kb_add(x_del_back,		CTRL('?'), 0);
+-	kb_add(x_del_back,		CTRL('H'), 0);
++	kb_add(x_del_bword,		CTRL('H'), 0);
++	kb_add(x_del_fword,		CTRL('['), '[', 'M', 0);
+ 	kb_add(x_del_char,		CTRL('['), '[', '3', '~', 0); /* delete */
+ 	kb_add(x_del_bword,		CTRL('W'), 0);
+ 	kb_add(x_del_bword,		CTRL('['), CTRL('?'), 0);
