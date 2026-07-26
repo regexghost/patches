@@ -1,0 +1,14 @@
+diff --git a/commands.c b/commands.c
+index f685bc0..0c2be5a 100644
+--- a/commands.c
++++ b/commands.c
+@@ -62,6 +62,9 @@ bool cg_quit(arg_t _)
+ 				printf("%s\n", files[i].name);
+ 		}
+ 	}
++	if (options->to_stdout) {
++		printf("index: %d\n", fileidx);
++	}
+ 	exit(EXIT_SUCCESS);
+ }
+ 
