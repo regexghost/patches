@@ -1,0 +1,169 @@
+diff --git a/src/cut.c b/src/cut.c
+index 856f6ff..3b9a9fe 100644
+--- a/src/cut.c
++++ b/src/cut.c
+@@ -442,6 +442,25 @@ void ingraft_buffer(linestruct *topline)
+ 		new_magicline();
+ }
+ 
++void copy_to_system_clipboard(linestruct *somebuffer)
++{
++	linestruct *buf_copy = copy_buffer(somebuffer);
++
++	FILE *f;
++	f = fopen("/tmp/nano-copy.txt", "w");
++	linestruct* curline = buf_copy;
++	int i = 0;
++	while (curline != NULL) {
++		if (i != 0) fprintf(f, "\n");
++		i++;
++		fprintf(f, curline->data);
++		curline = curline->next;
++	}
++
++	fclose(f);
++	system("cat /tmp/nano-copy.txt | xclip -selection clipboard");
++}
++
+ /* Meld a copy of the given buffer into the current file buffer. */
+ void copy_from_buffer(linestruct *somebuffer)
+ {
+@@ -604,7 +623,7 @@ void zap_text(void)
+ }
+ 
+ /* Make a copy of the marked region, putting it in the cutbuffer. */
+-void copy_marked_region(void)
++void copy_marked_region(int type)
+ {
+ 	linestruct *topline, *botline, *afterline;
+ 	char *was_datastart, saved_byte;
+@@ -630,7 +649,11 @@ void copy_marked_region(void)
+ 	was_datastart = topline->data;
+ 	topline->data += top_x;
+ 
+-	cutbuffer = copy_buffer(topline);
++	if (type == SYSTEM) {
++		copy_to_system_clipboard(topline);
++	} else {
++		cutbuffer = copy_buffer(topline);
++	}
+ 
+ 	/* Restore the proper state of the buffer. */
+ 	topline->data = was_datastart;
+@@ -639,6 +662,20 @@ void copy_marked_region(void)
+ }
+ #endif /* !NANO_TINY */
+ 
++
++void copy_system(void)
++{
++	wipe_statusbar();
++
++#ifndef NANO_TINY
++	if (openfile->mark) {
++		copy_marked_region(SYSTEM);
++		statusbar(_("Copied to system clipboard"));
++		return;
++	}
++#endif
++}
++
+ /* Copy text from the current buffer into the cutbuffer.  The text is either
+  * the marked region, the whole line, the text from cursor to end-of-line,
+  * just the line break, or nothing, depending on mode and cursor position. */
+@@ -664,7 +701,7 @@ void copy_text(void)
+ 
+ #ifndef NANO_TINY
+ 	if (openfile->mark) {
+-		copy_marked_region();
++		copy_marked_region(NORMAL);
+ 		return;
+ 	}
+ #endif
+diff --git a/src/definitions.h b/src/definitions.h
+index 443a1a0..62c9b6d 100644
+--- a/src/definitions.h
++++ b/src/definitions.h
+@@ -23,6 +23,9 @@
+ #include <config.h>
+ #endif
+ 
++#define NORMAL 1
++#define SYSTEM 2
++
+ #ifdef NEED_XOPEN_SOURCE_EXTENDED
+ #ifndef _XOPEN_SOURCE_EXTENDED
+ #define _XOPEN_SOURCE_EXTENDED  1
+diff --git a/src/files.c b/src/files.c
+index 0cc8b9b..f1ba2b6 100644
+--- a/src/files.c
++++ b/src/files.c
+@@ -1050,7 +1050,7 @@ void execute_command(const char *command)
+ 		if (ISSET(MULTIBUFFER)) {
+ 			openfile = openfile->prev;
+ 			if (openfile->mark)
+-				copy_marked_region();
++				copy_marked_region(NORMAL);
+ 			else
+ 				whole_buffer = TRUE;
+ 		} else
+diff --git a/src/global.c b/src/global.c
+index 06294f4..3b8c545 100644
+--- a/src/global.c
++++ b/src/global.c
+@@ -595,6 +595,8 @@ void shortcut_init(void)
+ 		N_("Cut current line (or marked region) and store it in cutbuffer");
+ 	const char *copy_gist =
+ 		N_("Copy current line (or marked region) and store it in cutbuffer");
++	const char *copysystem_gist =
++		N_("Copy marked region to system clipboard (xclip)");
+ 	const char *paste_gist =
+ 		N_("Paste the contents of cutbuffer at current cursor position");
+ 	const char *cursorpos_gist = N_("Display the position of the cursor");
+@@ -862,6 +864,8 @@ void shortcut_init(void)
+ 			N_("Set Mark"), WHENHELP(mark_gist), TOGETHER);
+ 	add_to_funcs(copy_text, MMAIN,
+ 			N_("Copy"), WHENHELP(copy_gist), BLANKAFTER);
++	add_to_funcs(copy_system, MMAIN,
++			N_("Copy System"), WHENHELP(copysystem_gist), BLANKAFTER);
+ #endif
+ 
+ 	add_to_funcs(case_sens_void, MWHEREIS|MREPLACE,
+@@ -1050,6 +1054,8 @@ void shortcut_init(void)
+ #else
+ 	add_to_funcs(copy_text, MMAIN,
+ 			N_("Copy"), WHENHELP(copy_gist), BLANKAFTER);
++	add_to_funcs(copy_system, MMAIN,
++			N_("Copy System"), WHENHELP(copysystem_gist), BLANKAFTER);
+ #endif
+ 
+ 	add_to_funcs(do_verbatim_input, MMAIN,
+diff --git a/src/prototypes.h b/src/prototypes.h
+index 18cd3eb..7182c1f 100644
+--- a/src/prototypes.h
++++ b/src/prototypes.h
+@@ -274,9 +274,10 @@ void cut_text(void);
+ #ifndef NANO_TINY
+ void cut_till_eof(void);
+ void zap_text(void);
+-void copy_marked_region(void);
++void copy_marked_region(int);
+ #endif
+ void copy_text(void);
++void copy_system(void);
+ void paste_text(void);
+ 
+ /* Most functions in files.c. */
+diff --git a/src/rcfile.c b/src/rcfile.c
+index 59d932a..0526c84 100644
+--- a/src/rcfile.c
++++ b/src/rcfile.c
+@@ -249,6 +249,8 @@ keystruct *strtosc(const char *input)
+ 		s->func = cut_text;
+ 	else if (!strcmp(input, "copy"))
+ 		s->func = copy_text;
++	else if (!strcmp(input, "copysystem"))
++		s->func = copy_system;
+ 	else if (!strcmp(input, "paste"))
+ 		s->func = paste_text;
+ #ifndef NANO_TINY
