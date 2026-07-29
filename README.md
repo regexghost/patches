@@ -18,6 +18,14 @@ https://github.com/ibara/oksh
 
 Case insensitive auto-complete, and removing certain commands from history file
 
+New patch for adding ctrl-backspace and ctrl-delete to emacs mode (default mode)
+
+## nano
+
+https://www.nano-editor.org/
+
+Added a new keybinding, `copysystem`, which copies marked/selected text to the system clipboard
+
 ## pipe-viewer
 
 https://github.com/trizen/pipe-viewer
