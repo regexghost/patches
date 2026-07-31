@@ -17,7 +17,7 @@ index 856f6ff..3b9a9fe 100644
 +	while (curline != NULL) {
 +		if (i != 0) fprintf(f, "\n");
 +		i++;
-+		fprintf(f, curline->data);
++		fprintf(f, "%s", curline->data);
 +		curline = curline->next;
 +	}
 +
