@@ -1,0 +1,84 @@
+diff --git a/src/client.c b/src/client.c
+index 4856fd4..82ef774 100644
+--- a/src/client.c
++++ b/src/client.c
+@@ -37,6 +37,10 @@ static void RestoreTransients(ClientNode *np, char raise);
+ static void KillClientHandler(ClientNode *np);
+ static void UnmapClient(ClientNode *np);
+ 
++void UnsetActiveClient() {
++	activeClient = NULL;
++}
++
+ /** Load windows that are already mapped. */
+ void StartupClients(void)
+ {
+diff --git a/src/client.h b/src/client.h
+index 6be5353..30bc590 100644
+--- a/src/client.h
++++ b/src/client.h
+@@ -166,6 +166,10 @@ typedef struct ClientNode {
+ /** The number of clients (maintained in client.c). */
+ extern unsigned int clientCount;
+ 
++/** Unset the activeClient variable
++ */
++void UnsetActiveClient(void);
++
+ /** Find a client by window or parent window.
+  * @param w The window.
+  * @return The client (NULL if not found).
+diff --git a/src/desktop.c b/src/desktop.c
+index 1a136ca..4e5a502 100644
+--- a/src/desktop.c
++++ b/src/desktop.c
+@@ -165,20 +165,12 @@ void ChangeDesktop(unsigned int desktop)
+       return;
+    }
+ 
+-   /* Hide clients from the old desktop.
+-    * Note that we show clients in a separate loop to prevent an issue
+-    * with clients losing focus.
+-    */
++   /* Unset active client */
+    for(x = 0; x < LAYER_COUNT; x++) {
+       for(np = nodes[x]; np; np = np->next) {
+-         if(np->state.status & STAT_STICKY) {
+-            continue;
+-         }
+-         if(np->state.desktop == currentDesktop) {
+-            HideClient(np);
+-            if((np->state.status & STAT_MINIMIZED) && (np->state.status & STAT_ACTIVE)) {
+-               np->state.status &= ~STAT_ACTIVE;
+-            }
++         if (np->state.desktop == currentDesktop && np == GetActiveClient()) {
++         	UnsetActiveClient();
++         	break;
+          }
+       }
+    }
+@@ -195,6 +187,24 @@ void ChangeDesktop(unsigned int desktop)
+       }
+    }
+ 
++   /* Hide clients from the old desktop.
++    * Note that we show clients in a separate loop to prevent an issue
++    * with clients losing focus.
++    */
++   for(x = 0; x < LAYER_COUNT; x++) {
++      for(np = nodes[x]; np; np = np->next) {
++         if(np->state.status & STAT_STICKY) {
++            continue;
++         }
++         if(np->state.desktop == currentDesktop) {
++            HideClient(np);
++            if((np->state.status & STAT_MINIMIZED) && (np->state.status & STAT_ACTIVE)) {
++               np->state.status &= ~STAT_ACTIVE;
++            }
++         }
++      }
++   }
++
+    previousDesktop = currentDesktop;
+    currentDesktop = desktop;
+ 

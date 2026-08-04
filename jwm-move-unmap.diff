@@ -1,0 +1,38 @@
+diff --git a/src/client.c b/src/client.c
+index 82ef774..4c6e779 100644
+--- a/src/client.c
++++ b/src/client.c
+@@ -643,10 +643,14 @@ void HideClient(ClientNode *np)
+       }
+       np->state.status |= STAT_HIDDEN;
+       if(np->state.status & (STAT_MAPPED | STAT_SHADED)) {
++         int north, south, east, west;
++         GetBorderSize(&np->state, &north, &south, &east, &west);
+          if(np->parent != None) {
+-            JXUnmapWindow(display, np->parent);
++            JXMoveWindow(display, np->parent, -np->width - 200, np->y - north);
++//            JXUnmapWindow(display, np->parent);
+          } else {
+-            JXUnmapWindow(display, np->window);
++            JXMoveWindow(display, np->window, -np->width - 200, np->y - north);
++//            JXUnmapWindow(display, np->window);
+          }
+       }
+    }
+@@ -659,10 +663,14 @@ void ShowClient(ClientNode *np)
+       np->state.status &= ~STAT_HIDDEN;
+       if(np->state.status & (STAT_MAPPED | STAT_SHADED)) {
+          if(!(np->state.status & STAT_MINIMIZED)) {
++            int north, south, east, west;
++            GetBorderSize(&np->state, &north, &south, &east, &west);
+             if(np->parent != None) {
+-               JXMapWindow(display, np->parent);
++               JXMoveWindow(display, np->parent, np->x - west, np->y - north);
++//               JXMapWindow(display, np->parent);
+             } else {
+-               JXMapWindow(display, np->window);
++               JXMoveWindow(display, np->parent, np->x - west, np->y - north);
++//               JXMapWindow(display, np->window);
+             }
+             if(np->state.status & STAT_ACTIVE) {
+                FocusClient(np);

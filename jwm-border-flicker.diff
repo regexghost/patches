@@ -1,0 +1,13 @@
+diff --git a/src/border.c b/src/border.c
+index 256ba31..1c36209 100644
+--- a/src/border.c
++++ b/src/border.c
+@@ -421,7 +421,7 @@ void DrawBorderHelper(const ClientNode *np)
+    }
+ 
+    /* Set parent background to reduce flicker. */
+-   JXSetWindowBackground(display, np->parent, titleColor2);
++   JXSetWindowBackground(display, np->parent, None);
+ 
+    canvas = JXCreatePixmap(display, np->parent, width, north, rootDepth);
+    gc = JXCreateGC(display, canvas, 0, NULL);

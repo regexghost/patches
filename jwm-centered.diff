@@ -1,0 +1,15 @@
+diff --git a/src/place.c b/src/place.c
+index 74ddb3a..959f394 100644
+--- a/src/place.c
++++ b/src/place.c
+@@ -663,8 +663,8 @@ void PlaceClient(ClientNode *np, char alreadyMapped)
+       SubtractTrayBounds(&box, np->state.layer);
+       SubtractStrutBounds(&box, np);
+ 
+-      /* If tiled is specified, first attempt to use tiled placement. */
+-      if(np->state.status & STAT_TILED) {
++      /* If tiled is specified, use, unless centered is specified. */
++      if(np->state.status & STAT_TILED && !(np->state.status & STAT_CENTERED)) {
+          if(TileClient(&box, np)) {
+             return;
+          }

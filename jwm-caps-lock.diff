@@ -1,0 +1,13 @@
+diff --git a/src/binding.c b/src/binding.c
+index 9515bfa..ff35318 100644
+--- a/src/binding.c
++++ b/src/binding.c
+@@ -66,7 +66,7 @@ typedef struct LockNode {
+ } LockNode;
+ 
+ static LockNode lockMods[] = {
+-   { XK_Caps_Lock,   0 },
++//   { XK_Caps_Lock,   0 },
+    { XK_Num_Lock,    0 }
+ };
+ 
