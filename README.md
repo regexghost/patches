@@ -37,3 +37,15 @@ https://github.com/trizen/pipe-viewer
 https://github.com/gwsw/less
 
 bsu and esu sync signals, not perfectly implemented but it works
+
+## JWM
+
+https://github.com/joewing/jwm
+
+Swap order of window hiding/unhiding on desktop change, and don't use border colour for window background, reduces flicker without compositor
+
+Disable caps lock line to fix a bug where keyboard shortcuts don't work if you have caps lock and escape swapped
+
+Similar to dwm, don't map/unmap windows when changing desktop, just move off screen
+
+Apply tiled to windows, only if centered not also specified. Allows me to use tiled for all windows except those in a centered group
