@@ -2,7 +2,7 @@
 
 Patches I have made for various other programs
 
-Note: Doesn't include suckless programs as I have seperate repos for my builds of those
+Note: Doesn't include suckless programs as I have separate repos for my builds of those
 
 ## Lemonbar-xft
 
@@ -49,3 +49,11 @@ Disable caps lock line to fix a bug where keyboard shortcuts don't work if you h
 Similar to dwm, don't map/unmap windows when changing desktop, just move off screen
 
 Apply tiled to windows, only if centered not also specified. Allows me to use tiled for all windows except those in a centered group
+
+## Cubiomes Viewer
+
+A patch to change the temperature value from `-10` to `-9`, has the effect of reducing biome temperature clustering. e.g. no 2000x block wide tundras. Patch for cubiomes viewer to match with a datapack, so you can accurately hunt for seeds
+
+## To Do
+
+* JWM window swallowing

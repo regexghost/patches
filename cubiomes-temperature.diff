@@ -1,0 +1,13 @@
+diff --git a/biomenoise.c b/biomenoise.c
+index 9002732..bb256f3 100644
+--- a/biomenoise.c
++++ b/biomenoise.c
+@@ -864,7 +864,7 @@ static int init_climate_seed(
+         // md5 "minecraft:temperature" or "minecraft:temperature_large"
+         pxr.lo = xlo ^ (large ? 0x944b0073edf549db : 0x5c7e6b29735f0d7f);
+         pxr.hi = xhi ^ (large ? 0x4ff44347e9d22b96 : 0xf7d86f1bbc734988);
+-        n += xDoublePerlinInit(dpn, &pxr, oct, amp, large ? -12 : -10, 6, nmax);
++        n += xDoublePerlinInit(dpn, &pxr, oct, amp, large ? -12 : -9, 6, nmax);
+         } break;
+ 
+     case NP_HUMIDITY: {
